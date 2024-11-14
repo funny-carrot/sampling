@@ -24,7 +24,6 @@ import seaborn as sns
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-# Set random seed for reproducibility
 np.random.seed(42)
 
 ATTACK_RATE = 0.10
