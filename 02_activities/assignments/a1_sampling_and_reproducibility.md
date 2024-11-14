@@ -23,7 +23,7 @@ import seaborn as sns
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-np.random.seed(42)
+np.random.seed(42) # Set random seed for reproducibility
 
 ATTACK_RATE = 0.10
 TRACE_SUCCESS = 0.20
