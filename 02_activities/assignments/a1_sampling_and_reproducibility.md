@@ -15,7 +15,6 @@ Alter the code so that it is reproducible. Describe the changes you made to the 
 ```
 Please write your explanation here...
 
-```
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -73,7 +72,7 @@ plt.legend()
 plt.tight_layout()
 plt.show()
 
-
+```
 ## Criteria
 
 |Criteria|Complete|Incomplete|
