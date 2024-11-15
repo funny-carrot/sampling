@@ -5,18 +5,39 @@
 
     ```
     write your answer here...
+    The sample is fairly representative because it includes both current and former employees from various departments. Stratified random sampling helps ensure different job roles are covered. However, some former employees might not respond, which could introduce bias.
     ```
 
 2. Given the class content (error, survey quality, ethics) covered since Part A of the assignment, do you wish to make any changes to your original survey? If so, make a copy of your original survey and make any desired changes. Describe the changes and your reasoning. Provide a link here for submission.
 
     ```
     write your answer here...
+1. Added demographic questions:
+
+New Question: "What department or team do/did you work in?"
+Reasoning: To analyze turnover causes specific to departments and ensure tailored solutions.
+
+2. Expanded Likert scales:
+
+Original Question: "On a scale of 1-5, how satisfied are/were you with the following aspects of your job?"
+Change: Expanded to a 7-point scale for more nuanced responses.
+Reasoning: Improves granularity and helps capture subtle variations in satisfaction levels.
+
+3. Added a consent and anonymity disclaimer:
+
+New Statement: "Your responses are anonymous and will only be used to improve employee experiences at the company."
+Reasoning: Aligns with ethical guidelines and improves trust, increasing response rates.
+
+
+
     ```
 
 3. Could the purpose of your survey have been fulfilled through an observational study? If yes, how? If no, why not?
 
     ```
     write your answer here...
+No, the purpose of this survey can not be fully fulfilled through an observational study. 
+While observational data might reveal patterns (e.g., employees leaving specific departments or roles), it would not provide insights into the subjective reasons behind turnover or employee satisfaction levels. The survey collects qualitative and attitudinal data that are inaccessible through observational methods.
     ```
 
 ## Why am I doing this assignment?
