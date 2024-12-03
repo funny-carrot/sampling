@@ -27,10 +27,11 @@ To identify the reasons behind the high turnover rate in entry- and lower-level 
 Describe your target population, sampling frame, sampling units, and observational units:
 ```
 write your answer here...
-Target Population: Current and former employees in entry- and lower-level positions at the company.
-Sampling Frame: A list of all current employees in relevant positions, along with contact information for former employees who have left within the past 12 months.
-Sampling Units: Individual employees (both current and former).
-Sampling Strategy: Stratified random sampling to ensure representation from various departments and job roles. Former employees will be surveyed via email, while current employees will be invited to participate through an internal portal.
+- Target Population: Current and former employees in entry- and lower-level positions at the company.
+- Sampling Frame: A list of all current employees in relevant positions, along with contact information for former employees who have left within the past 12 months.
+- Sampling Units: Individual employees (both current and former).
+- Sampling Strategy: Stratified random sampling to ensure representation from various departments and job roles. Former employees will be surveyed via email, while current employees will be invited to participate through an internal portal.
+- Observational Units: individual responses provided by current and former employees in entry- and lower-level positions at the company.
 
 ```
 
