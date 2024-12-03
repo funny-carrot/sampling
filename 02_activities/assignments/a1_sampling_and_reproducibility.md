@@ -10,61 +10,112 @@ Modify the number of repetitions in the simulation to 1000 (from the original 50
 
 Alter the code so that it is reproducible. Describe the changes you made to the code and how they affected the reproducibility of the script file. The output does not need to match Whitby’s original blogpost/graphs, it just needs to produce the same output when run multiple times
 
-# Author: YOUR NAME
+# Author: Yibin Wang
 
 ```
 Please write your explanation here...
+
+1. Stages of Sampling in the Model
+
+A. Event Assignment
+- Sampling Procedure: The population of 1,000 individuals is deterministically assigned to events:
+Two weddings, each with 100 attendees (200 individuals total).
+80 brunches, each with 10 attendees (800 individuals total).
+- Function Used: Defined in the events array within simulate_event().
+- Sample Size: 1,000 individuals, divided into fixed group sizes.
+- Sampling Frame: The entire simulated population of 1,000 individuals.
+- Underlying Distribution: Deterministic allocation based on predefined proportions.
+- Relation to Blog Post: Reflects the blog’s point that structured events (like weddings with fixed guest lists) are easier to trace than informal gatherings (like brunches). This systematic difference is a major source of sampling bias.
+
+B. Infection Sampling
+- Sampling Procedure: A random subset of individuals is infected, with each person having a 10% chance of infection (ATTACK_RATE).
+- Function Used: np.random.choice() is used to select infected individuals.
+- Sample Size: 100 individuals (10% of the population).
+- Sampling Frame: All event attendees (1,000 individuals).
+- Underlying Distribution: Independent and identically distributed (iid) Bernoulli trials, where each individual has the same probability of being infected.
+- Relation to Blog Post: Represents randomness in infection spread, aligning with the blog’s assumption that the true distribution of infections varies but centers on 20% for weddings.
+
+C. Primary Contact Tracing
+- Sampling Procedure: Each infected individual has a 20% chance of being traced (TRACE_SUCCESS).
+- Function Used: np.random.rand() generates random probabilities to determine whether each infected individual is traced.
+- Sample Size: ~20 traced individuals (20% of 100 infected individuals, on average).
+- Sampling Frame: The subset of infected individuals.
+- Underlying Distribution: Bernoulli trials with a success probability of 0.20.
+- Relation to Blog Post: Models the limited capacity of contact tracers, as described in the blog. Only a fraction of cases are traced, and the process is non-random due to differing traceability across event types.
+
+D. Secondary Contact Tracing
+- Sampling Procedure: If two or more cases are traced to the same event, all attendees of that event are fully traced.
+- Function Used: value_counts() calculates the number of traced cases per event. Events meeting the SECONDARY_TRACE_THRESHOLD condition trigger full tracing.
+- Sample Size: Varies depending on the number of events with ≥2 traced cases.
+- Sampling Frame: All attendees of events where secondary tracing occurs.
+- Underlying Distribution: Deterministic—all infections from such events are traced.
+- Relation to Blog Post: Models systematic bias toward structured events like weddings. The blog describes how fixed guest lists make such events disproportionately represented in traced cases, leading to overestimation of their role in virus spread.
+
+2. Comparison to the Blog Post
+
+The simulation replicates the blog’s findings:
+True Proportions (Blue): Infections from weddings center around 20%.
+Traced Proportions (Red): Skew higher, often >40%, due to secondary tracing.
+Insight: Contact tracing overrepresents cases from weddings, underestimating dispersed gatherings like brunches.
+
+3. Modifying the Number of Repetitions
+
+- Change: Reduced repetitions to 1,000:
+results = [simulate_event(m) for m in range(1000)]
+- Effect: Histograms show more variability due to smaller sample size but still highlight the bias.
+- Reproducibility: Without a fixed seed, outputs vary between runs.
+
+4. Ensuring Reproducibility
+- Changes Made: Added np.random.seed(42) for consistent randomness. Reduced repetitions to 1,000 for efficiency.
+- Effect: Ensures consistent outputs across runs while maintaining the model’s core insights.
+
+
+updated code:
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-import warnings
-warnings.simplefilter(action='ignore', category=FutureWarning)
-
-np.random.seed(42) # Set random seed for reproducibility
-
+# Constants
 ATTACK_RATE = 0.10
 TRACE_SUCCESS = 0.20
 SECONDARY_TRACE_THRESHOLD = 2
 
+# Set seed for reproducibility
+np.random.seed(42)
+
 def simulate_event(m):
     events = ['wedding'] * 200 + ['brunch'] * 800
-    ppl = pd.DataFrame({
-        'event': events,
-        'infected': False,
-        'traced': np.nan
-    })
-
+    ppl = pd.DataFrame({'event': events, 'infected': False, 'traced': np.nan})
     ppl['traced'] = ppl['traced'].astype(pd.BooleanDtype())
 
     infected_indices = np.random.choice(ppl.index, size=int(len(ppl) * ATTACK_RATE), replace=False)
     ppl.loc[infected_indices, 'infected'] = True
 
     ppl.loc[ppl['infected'], 'traced'] = np.random.rand(sum(ppl['infected'])) < TRACE_SUCCESS
-
     event_trace_counts = ppl[ppl['traced'] == True]['event'].value_counts()
     events_traced = event_trace_counts[event_trace_counts >= SECONDARY_TRACE_THRESHOLD].index
     ppl.loc[ppl['event'].isin(events_traced) & ppl['infected'], 'traced'] = True
 
-    ppl['event_type'] = ppl['event'].str[0]
-    wedding_infections = sum(ppl['infected'] & (ppl['event_type'] == 'w'))
-    brunch_infections = sum(ppl['infected'] & (ppl['event_type'] == 'b'))
+    wedding_infections = sum(ppl['infected'] & (ppl['event'] == 'wedding'))
+    brunch_infections = sum(ppl['infected'] & (ppl['event'] == 'brunch'))
     p_wedding_infections = wedding_infections / (wedding_infections + brunch_infections)
 
-    wedding_traces = sum(ppl['infected'] & ppl['traced'] & (ppl['event_type'] == 'w'))
-    brunch_traces = sum(ppl['infected'] & ppl['traced'] & (ppl['event_type'] == 'b'))
+    wedding_traces = sum(ppl['infected'] & ppl['traced'] & (ppl['event'] == 'wedding'))
+    brunch_traces = sum(ppl['infected'] & ppl['traced'] & (ppl['event'] == 'brunch'))
     p_wedding_traces = wedding_traces / (wedding_traces + brunch_traces)
 
     return p_wedding_infections, p_wedding_traces
 
+# Run simulation
 results = [simulate_event(m) for m in range(1000)]
 props_df = pd.DataFrame(results, columns=["Infections", "Traces"])
 
+# Plot
 plt.figure(figsize=(10, 6))
-sns.histplot(props_df['Infections'], color="blue", alpha=0.75, binwidth=0.05, kde=False, label='Infections from Weddings')
-sns.histplot(props_df['Traces'], color="red", alpha=0.75, binwidth=0.05, kde=False, label='Traced to Weddings')
+sns.histplot(props_df['Infections'], color="blue", alpha=0.75, binwidth=0.05, label='Infections from Weddings')
+sns.histplot(props_df['Traces'], color="red", alpha=0.75, binwidth=0.05, label='Traced to Weddings')
 plt.xlabel("Proportion of cases")
 plt.ylabel("Frequency")
 plt.title("Impact of Contact Tracing on Perceived Infection Sources")
